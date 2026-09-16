@@ -209,7 +209,22 @@ class DesktopBuddy:
         self.schedule_reminder()
         self.schedule_weather_fetch()
         self.check_clock()
+        self.clamp_to_screen()
         self.animate()
+
+    def clamp_to_screen(self):
+        # If a monitor gets disconnected (e.g. undocking a laptop), the
+        # window can be left positioned outside the now-smaller screen.
+        # Periodically pull it back into view instead of leaving it stuck
+        # off-screen until the app is restarted.
+        sw = self.root.winfo_screenwidth()
+        sh = self.root.winfo_screenheight()
+        x, y = self.root.winfo_x(), self.root.winfo_y()
+        new_x = min(max(x, 0), max(0, sw - W))
+        new_y = min(max(y, 0), max(0, sh - H))
+        if (new_x, new_y) != (x, y):
+            self.root.geometry(f"+{new_x}+{new_y}")
+        self.root.after(3000, self.clamp_to_screen)
 
     def start_drag(self, event):
         self._dx, self._dy = event.x, event.y
