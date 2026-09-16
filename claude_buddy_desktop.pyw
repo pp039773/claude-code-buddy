@@ -228,6 +228,7 @@ class DesktopBuddy:
     def on_release(self, event):
         if not self._dragged:
             self.change_state()
+            self.show_message(random.choice(TALK_LINES), duration=2500)
 
     def show_menu(self, event):
         self.menu.tk_popup(event.x_root, event.y_root)
